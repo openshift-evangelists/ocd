@@ -1,6 +1,10 @@
 #!/bin/bash
 
-SOURCE="$1"
-NAME="$2"
+NAME="$1"
+DIR="$2"
 
-oc start-build $NAME --from-dir=$SOURCE
+if [ "" = "$DIR" ]; then
+	oc start-build $NAME
+else
+	oc start-build $NAME --from-dir=$SOURCE
+fi

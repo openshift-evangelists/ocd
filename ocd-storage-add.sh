@@ -9,18 +9,18 @@ NAME="$4"
 [ "shared" = "$TYPE" ] && CLS="ReadWriteMany"
 [ "local" = "$TYPE" ] && CLS="ReadWriteOnce"
 
-cat <<EOF | oc create --dry-run=true -f -
+cat <<EOF | oc create -f -
 apiVersion: "v1"
 kind: "PersistentVolumeClaim"
 metadata:
-  name: $NAME
+  name: ${NAME}
 spec:
   accessModes:
-    - $CLS
+    - ${CLS}
   resources:
     requests:
-      storage: ${SIZE}Gi
-  volumeName: $NAME
+      storage: ${SIZE}
+  volumeName: ${NAME}
 EOF
 
 
