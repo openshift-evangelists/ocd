@@ -6,7 +6,7 @@ SRC="$3"
 
 [ "" = "$NAME" ] && NAME=$TYPE
 
-if [ "" = "$DIR" ]; then
+if [ "" = "$SRC" ]; then
 	oc new-app $TYPE --name $NAME -locdapp=`cat $HOME/.ocd/context`
 else
 	oc new-app $TYPE~$SRC --name $NAME -locdapp=`cat $HOME/.ocd/context`
