@@ -8,7 +8,7 @@ ocd create php frontend https://github.com/openshift-demos/php-sample.git
 # oc get build
 # oc get pods
 
-ocd create mysql db
+ocd create mysql-persistent db
 
 # oc get dc
 # oc get pods
@@ -26,7 +26,7 @@ ocd sync frontend
 # Edit the index.php and something before the PHP code and wait for sync
 # Reload the page in the browser
 
-ocd scale frontend 2
+ocd scale 2 frontend
 
 # Use curl to the the web page, should be switching between the origin and edited
 

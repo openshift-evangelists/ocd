@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME="$2"
+NAME="$1"
 
 oc delete all -lapp=$NAME
 oc delete pvc $NAME

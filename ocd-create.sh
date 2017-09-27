@@ -7,7 +7,7 @@ SRC="$3"
 [ "" = "$NAME" ] && NAME=$TYPE
 
 if [ "" = "$SRC" ]; then
-	oc new-app $TYPE --name $NAME -locdapp=`cat $HOME/.ocd/context`
+	oc new-app $TYPE --param=DATABASE_SERVICE_NAME=$NAME --name $NAME -locdapp=`cat $HOME/.ocd/context`
 else
 	oc new-app $TYPE~$SRC --name $NAME -locdapp=`cat $HOME/.ocd/context`
 fi
