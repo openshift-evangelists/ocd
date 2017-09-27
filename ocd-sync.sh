@@ -1,8 +1,10 @@
 #!/bin/bash
 
-SOURCE="$1"
-NAME="$2"
+NAME="$1"
+SOURCE="$2"
 
-pod="`oc get pods -lapp=app -o name | head`"
+[ "" = "$SOURCE" ] && SOURCE="."
+
+pod="`oc get pods -lapp=$NAME -o name | head`"
 
 oc rsync --watch=true $SOURCE ${pod:5}:.
