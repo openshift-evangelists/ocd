@@ -82,6 +82,12 @@ Scale deployment `name` to `count` pods.
 
 `name` and `count` are mandatory.
 
+### ocd destroy [name]
+
+Undeploy deployment `name`.
+
+`name` is mandatory.
+
 ### ocd wipe
 
 Delete all deployments in current application context.
