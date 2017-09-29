@@ -2,6 +2,8 @@
 
 `ocd` is command line tool designed for engineers working with OpenShift
 
+This is a proof of concept and not meant to be used for 'real' work.
+
 ## Installation
 
 To get started clone the git repo and source the entrypoint.sh script
