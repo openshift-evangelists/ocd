@@ -103,8 +103,9 @@ def storage():
 @click.command(name="add")
 @click.argument('type')
 @click.argument('size')
+@click.argument('target')
 @click.argument('name')
-def storage_add(type, size, name):
+def storage_add(type, size, target, name):
     """Add persistent storage"""
     if type == 'shared':
         type = 'ReadWriteMany'
@@ -126,7 +127,8 @@ spec:
   volumeName: %s
 """ % (name, type, size, name)
 
-    print(run(['oc', 'create', '-f', '-'], yml))
+    run(['oc', 'create', '-f', '-'], yml)
+    run(['oc', 'volume', 'dc', name, '--add', '--type=persistentVolumeClaim', '--mount-path=%s' % target, '--claim-name=%s' % name])
 
 @click.command()
 @click.argument('name')
@@ -136,11 +138,11 @@ def sync(name, source):
     if source is None:
         source = "."
 
-    code, out, err = run(['oc', 'get', 'pods', '-lname=%s' % name, '-o', 'name'])
+    code, out, err = run(['oc', 'get', 'pods', '-ldeploymentconfig=%s' % name, '-o', 'name'])
     pods = out.strip().split('\n')
     pod = pods[0][5:]
 
-    run(['oc', 'rsync', '--watch=true', source, '%s:.' % pod])
+    print(run(['oc', 'rsync', '--watch=true', source, '%s:.' % pod]))
 
 
 @click.command()

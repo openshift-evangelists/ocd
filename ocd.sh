@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 ocd.py $*
+python3 $SRC/ocd.py $*
