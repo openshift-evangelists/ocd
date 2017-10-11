@@ -13,18 +13,20 @@ $ git clone https://github.com/openshift-evangelists/ocd.git
 $ source ocd/entrypoint.sh
 ```
 
-## Requirements
+### Requirements
 
-Most of the commands require just `oc` and `bash`, though, some have external dependencies
+* `oc` 
+* `python3`
 
-### ocd link
+And for Python, there is dependency on Click
 
-Requires also 
+```
+$ pip3 install -r ocd/requirements.txt
+```
 
-* [`jq`](https://stedolan.github.io/jq/)
-* `sed`
-* `awk`
-* `base64`
+## How to
+
+After installation the `ocd` command is available to use.
 
 ## Help
 
@@ -54,11 +56,21 @@ Triggers new build.
 
 `path` is mandatory for `--from-dir` builds.
 
-### ocd sync [name] [path]
+### ocd destroy [name]
 
-Start rsync to the pod. Will take first running pod for deployment `name`.
+Undeploy deployment `name`.
 
-`name` is mandatory. `path` defaults to `.`.
+`name` is mandatory.
+
+### ocd exit
+
+Exit the application context.
+
+### ocd expose [name]
+
+Create route for deployment `name`.
+
+`name` is mandatory.
 
 ### ocd link [name] [target]
 
@@ -66,41 +78,27 @@ Expects to find secret with name `name`, create e.g. my MySQL template, and copi
 
 `name` and `target` are mandatory.
 
-### ocd storage add [type] [size] [path] [name]
-
-Adds new persistent `local or shared` storage of `size` to deployment `name` mounted at `path`.
-
-`type` is mandatory and is either `shared` or `local`. `size`, `path` and `name` are mandatory.
-
-### ocd url add [name]
-
-Create route for deployment `name`.
-
-`name` is mandatory.
-
 ### ocd scale [count] [name]
 
 Scale deployment `name` to `count` pods.
 
 `name` and `count` are mandatory.
 
-### ocd destroy [name]
+### ocd storage add [type] [size] [path] [name]
 
-Undeploy deployment `name`.
+Adds new persistent `local or shared` storage of `size` to deployment `name` mounted at `path`.
 
-`name` is mandatory.
+`type` is mandatory and is either `shared` or `local`. `size`, `path` and `name` are mandatory.
+
+### ocd sync [name] [path]
+
+Start rsync to the pod. Will take first running pod for deployment `name`.
+
+`name` is mandatory. `path` defaults to `.`.
 
 ### ocd wipe
 
 Delete all deployments in current application context.
-
-### ocd exit
-
-Exit the application context.
-
-## How to
-
-After installation the `ocd` command is available to use.
 
 ## License
 
