@@ -2,7 +2,7 @@ import click
 import os
 import subprocess
 
-context_file = os.path.expandvars("$HOME/.ocd/context")
+context_file = os.path.expanduser("~/.ocd/context")
 
 
 def run(cmd, stdin=None):
@@ -24,7 +24,7 @@ def cli():
     pass
 
 
-@click.command(name='shell-init')
+@cli.command(name='shell-init')
 def shell_init():
     """Enhance your shell with ocd"""
     path = os.path.dirname(os.path.abspath(__file__))
@@ -38,7 +38,7 @@ alias ocd="python3 %s/ocd.py"
     """ % path
     print(script)
 
-@click.command()
+@cli.command()
 @click.argument('name')
 def app(name):
     """Enter context"""
@@ -46,7 +46,7 @@ def app(name):
         file.write(name)
 
 
-@click.command()
+@cli.command()
 @click.argument('type')
 @click.argument('name', required=False)
 @click.argument('source', required=False)
@@ -61,7 +61,7 @@ def create(type, name, source):
         run(["oc", "new-app", "%s~%s" % (type, source), "--name", name, "-lapp=%s" % context()])
 
 
-@click.command()
+@cli.command()
 @click.argument('name')
 @click.argument('source', required=False)
 def deploy(name, source):
@@ -72,7 +72,7 @@ def deploy(name, source):
         run(["oc", "start-build", name, "--from-dir=%s" % source])
 
 
-@click.command()
+@cli.command()
 @click.argument('name')
 def destroy(name):
     """Destroy component"""
@@ -81,20 +81,20 @@ def destroy(name):
     run(["oc", "delete", "secret", name])
 
 
-@click.command()
+@cli.command()
 def exit():
     """Exit context"""
     os.remove(context_file)
 
 
-@click.command()
+@cli.command()
 @click.argument('name')
 def expose(name):
     """Expose component"""
     run(['oc', 'expose', 'service', name])
 
 
-@click.command()
+@cli.command()
 @click.argument('source')
 @click.argument('target')
 def link(source, target):
@@ -102,7 +102,7 @@ def link(source, target):
     print(run(['oc', 'set', 'env', 'dc', target, '--from=secret/%s' % source]))
 
 
-@click.command()
+@cli.command()
 @click.argument('count')
 @click.argument('name')
 def scale(count, name):
@@ -110,13 +110,13 @@ def scale(count, name):
     print(run(['oc', 'scale', 'dc', name, "--replicas=%s" % count]))
 
 
-@click.group()
+@cli.group()
 def storage():
     """Manage persistent storage"""
     pass
 
 
-@click.command(name="add")
+@storage.command(name="add")
 @click.argument('type')
 @click.argument('size')
 @click.argument('target')
@@ -147,7 +147,7 @@ spec:
     run(['oc', 'volume', 'dc', name, '--add', '--type=persistentVolumeClaim', '--mount-path=%s' % target, '--claim-name=%s' % name])
 
 
-@click.command()
+@cli.command()
 @click.argument('name')
 @click.argument('source', required=False)
 def sync(name, source):
@@ -162,7 +162,7 @@ def sync(name, source):
     print(run(['oc', 'rsync', '--watch=true', source, '%s:.' % pod]))
 
 
-@click.command()
+@cli.command()
 @click.argument('name', required=False)
 def wipe(name):
     """Wipe components in context"""
@@ -177,21 +177,6 @@ def wipe(name):
         run(['oc', 'delete', 'pvc', dc])
 
     run(['oc', 'delete', 'all', '-lapp=%s' % name])
-
-cli.add_command(shell_init)
-cli.add_command(app)
-cli.add_command(create)
-cli.add_command(deploy)
-cli.add_command(destroy)
-cli.add_command(exit)
-cli.add_command(expose)
-cli.add_command(link)
-cli.add_command(scale)
-cli.add_command(storage)
-cli.add_command(sync)
-cli.add_command(wipe)
-
-storage.add_command(storage_add)
 
 if __name__ == '__main__':
     os.environ["LC_ALL"] = "en_US.UTF-8"
