@@ -76,9 +76,7 @@ def deploy(name, source):
 @click.argument('name')
 def destroy(name):
     """Destroy component"""
-    run(["oc", "delete", "all", "-lapp=%s" % name])
-    run(["oc", "delete", "pvc", name])
-    run(["oc", "delete", "secret", name])
+    run(["oc", "delete", "all,pvc,secret", "-lapp=%s" % name])
 
 
 @cli.command()
@@ -91,7 +89,7 @@ def exit():
 @click.argument('name')
 def expose(name):
     """Expose component"""
-    run(['oc', 'expose', 'service', name])
+    run(['oc', 'expose', 'service', name, '-lapp=%s' % name])
 
 
 @cli.command()
@@ -134,6 +132,8 @@ apiVersion: "v1"
 kind: "PersistentVolumeClaim"
 metadata:
   name: %s
+  labels:
+    app: %s
 spec:
   accessModes:
     - %s
@@ -141,7 +141,7 @@ spec:
     requests:
       storage: %s
   volumeName: %s
-""" % (name, type, size, name)
+""" % (name, name, type, size, name)
 
     run(['oc', 'create', '-f', '-'], yml)
     run(['oc', 'volume', 'dc', name, '--add', '--type=persistentVolumeClaim', '--mount-path=%s' % target, '--claim-name=%s' % name])
@@ -155,7 +155,7 @@ def sync(name, source):
     if source is None:
         source = "."
 
-    code, out, err = run(['oc', 'get', 'pods', '-ldeploymentconfig=%s' % name, '-o', 'name'])
+    code, out, err = run(['oc', 'get', 'pods', '-ldeploymentconfig=%s' % name, '-lapp=%s' % name, '-o', 'name'])
     pods = out.strip().split('\n')
     pod = pods[0][5:]
 
@@ -176,7 +176,7 @@ def wipe(name):
         run(['oc', 'delete', 'secret', dc])
         run(['oc', 'delete', 'pvc', dc])
 
-    run(['oc', 'delete', 'all', '-lapp=%s' % name])
+    run(['oc', 'delete', 'all,secret,pvc,configmap', '-lapp=%s' % name])
 
 if __name__ == '__main__':
     os.environ["LC_ALL"] = "en_US.UTF-8"
