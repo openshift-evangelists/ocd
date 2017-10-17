@@ -10,7 +10,7 @@ To get started clone the git repo and source the entrypoint.sh script
 
 ```
 $ git clone https://github.com/openshift-evangelists/ocd.git
-$ source ocd/entrypoint.sh
+$ eval "$(python3 ocd/ocd.py shell-init)"
 ```
 
 ### Requirements

@@ -18,10 +18,25 @@ def context():
     with open(context_file, "r") as file:
         return file.read()
 
+
 @click.group()
 def cli():
     pass
 
+
+@click.command(name='shell-init')
+def shell_init():
+    """Enhance your shell with ocd"""
+    path = os.path.dirname(os.path.abspath(__file__))
+    script = """
+#!/bin/bash
+mkdir -p $HOME/.ocd
+export OCD_PROJECT='$(oc project -q)'
+export OCD_CONTEXT='$([ -f $HOME/.ocd/context ] && echo "/`cat $HOME/.ocd/context`")'
+export PS1="[$OCD_PROJECT$OCD_CONTEXT] $PS1"
+alias ocd="python3 %s/ocd.py"
+    """ % path
+    print(script)
 
 @click.command()
 @click.argument('name')
@@ -86,6 +101,7 @@ def link(source, target):
     """Link components"""
     print(run(['oc', 'set', 'env', 'dc', target, '--from=secret/%s' % source]))
 
+
 @click.command()
 @click.argument('count')
 @click.argument('name')
@@ -130,6 +146,7 @@ spec:
     run(['oc', 'create', '-f', '-'], yml)
     run(['oc', 'volume', 'dc', name, '--add', '--type=persistentVolumeClaim', '--mount-path=%s' % target, '--claim-name=%s' % name])
 
+
 @click.command()
 @click.argument('name')
 @click.argument('source', required=False)
@@ -161,6 +178,7 @@ def wipe(name):
 
     run(['oc', 'delete', 'all', '-lapp=%s' % name])
 
+cli.add_command(shell_init)
 cli.add_command(app)
 cli.add_command(create)
 cli.add_command(deploy)
